@@ -1,0 +1,32 @@
+﻿  Renderer.cpp
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(98): warning C4305: 'initializing': truncation from 'double' to 'float'
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(139): warning C4018: '<': signed/unsigned mismatch
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(163): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(165): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(167): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+Renderer.cpp(86): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(183): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(210): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(211): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(215): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(216): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(218): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(219): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Renderer.cpp(228): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+  Source.cpp
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(98): warning C4305: 'initializing': truncation from 'double' to 'float'
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(139): warning C4018: '<': signed/unsigned mismatch
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(163): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(165): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(167): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+  ToolFunctions.cpp
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(98): warning C4305: 'initializing': truncation from 'double' to 'float'
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(139): warning C4018: '<': signed/unsigned mismatch
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(163): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(165): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(167): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Generating code
+  All 721 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  IBL.vcxproj -> F:\OpenGL_ws\IBL\IBL\Release\IBL.exe

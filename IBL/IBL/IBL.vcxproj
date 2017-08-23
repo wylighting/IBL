@@ -70,7 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>F:\OpenGL_ws\OpenGL_Libraries\include;F:\OpenGL_ws\OpenGL_Libraries\include\TOOLS;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\OpenGL_ws\OpenGL_Libraries\libs\glew\Win32;F:\OpenGL_ws\OpenGL_Libraries\libs\glfw-lib-vc2015\Win32;F:\OpenGL_ws\OpenGL_Libraries\libs\assimp;F:\OpenGL_ws\OpenGL_Libraries\libs\freetype;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -96,6 +99,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;assimp-vc140-mt.lib;freetype262.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -112,11 +116,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\OpenGL_Libraries\include\TOOLS\model.cpp" />
+    <ClCompile Include="EnvLight.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="test.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="ToolFunctions.cpp" />
+    <ClCompile Include="Transfer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EnvLight.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Sampler.h" />
+    <ClInclude Include="SphericalHarmonic.h" />
+    <ClInclude Include="ToolFunctions.h" />
+    <ClInclude Include="Transfer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\WorkSpace\shaders\background.fs" />
+    <None Include="..\WorkSpace\shaders\background.vs" />
+    <None Include="..\WorkSpace\shaders\cubemap.fs" />
+    <None Include="..\WorkSpace\shaders\cubemap.vs" />
+    <None Include="..\WorkSpace\shaders\irradiance_convolution.fs" />
+    <None Include="..\WorkSpace\shaders\pbr.fs" />
+    <None Include="..\WorkSpace\shaders\pbr.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

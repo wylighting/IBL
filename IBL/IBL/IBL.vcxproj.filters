@@ -13,13 +13,74 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{73ec65b4-9a4e-40c9-ad87-8d32f558105a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\OpenGL_Libraries\include\TOOLS\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transfer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SphericalHarmonic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transfer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\WorkSpace\shaders\background.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\WorkSpace\shaders\background.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\WorkSpace\shaders\cubemap.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\WorkSpace\shaders\cubemap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\WorkSpace\shaders\irradiance_convolution.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\WorkSpace\shaders\pbr.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\WorkSpace\shaders\pbr.vs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
