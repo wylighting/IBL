@@ -3,6 +3,10 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <glm/detail/type_mat.hpp>
+#include <vector>
+#include <glm/detail/type_mat.hpp>
+#include <vector>
 
 EnvLight::EnvLight(string envMapPath, EnvMapType envMapType)
 {
@@ -176,22 +180,38 @@ GLuint EnvLight::CreateIrradianceMapWithSampling(const Shader &_irradianceShader
 vector<glm::vec3> EnvLight::L_lm = vector<glm::vec3>(9);
 bool EnvLight::sampleInitialized = false;
 
-vector<glm::vec3>& EnvLight::CalcLightCoeffs(const vector<Sample> &samples) const
+//vector<glm::vec3>& EnvLight::CalcLightCoeffs(const vector<Sample> &samples) const
+//{
+//	//assert(sampleInitialized == true);
+//
+//	float scale = 4 * MY_PI / samples.size();
+//	for(auto &sampleRay : samples)
+//	{
+//		glm::vec3 Lenv = GetLightFromEquirectEnvMap(sampleRay);
+//		for (int i = 0; i < 9; ++i)
+//			L_lm[i] += sampleRay.SHcoeffs[i] * Lenv;
+//	}
+//	for (auto &coeff : L_lm)
+//		coeff *= scale;
+//	return L_lm;
+//}
+
+vector<glm::vec3>& EnvLight::CalcLightCoeffs(const Sampler &sampler) const
 {
-	//assert(sampleInitialized == true);
+		float scale = 4 * MY_PI / sampler.size();
+		
+		for(unsigned i = 0; i < sampler.size(); ++i)
+		{
+			auto &sampleRay = sampler[i];
+			glm::vec3 Lenv = GetLightFromEquirectEnvMap(sampleRay);
+			for (int j = 0; j < 9; ++j)
+				L_lm[j] += sampleRay.SHcoeffs[j] * Lenv;
+		}
+		for (auto &coeff : L_lm)
+			coeff *= scale;
+		return L_lm;
 
-	float scale = 4 * MY_PI / samples.size();
-	for(auto &sampleRay : samples)
-	{
-		glm::vec3 Lenv = GetLightFromEquirectEnvMap(sampleRay);
-		for (int i = 0; i < 9; ++i)
-			L_lm[i] += sampleRay.SHcoeffs[i] * Lenv;
-	}
-	for (auto &coeff : L_lm)
-		coeff *= scale;
-	return L_lm;
 }
-
 
 glm::vec3 EnvLight::GetLightFromEquirectEnvMap(const Sample &sampleRay) const
 {

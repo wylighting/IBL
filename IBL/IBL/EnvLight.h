@@ -38,7 +38,8 @@ public:
 	void LoadHDREnvMap(string envMapPath);
 	GLuint Equirectangular2CubeMap(const Shader &equirectangularShader);
 	GLuint CreateIrradianceMapWithSampling(const Shader &irradianceShader);
-	vector<glm::vec3>& CalcLightCoeffs(const vector<Sample> &samples) const;
+	//vector<glm::vec3>& CalcLightCoeffs(const vector<Sample> &samples) const;
+	vector<glm::vec3>& CalcLightCoeffs(const Sampler &sampler) const;
 	//void GenerateSamples(int sqrtNumSamples);
 	//Sample GetSampleById(unsigned i);
 

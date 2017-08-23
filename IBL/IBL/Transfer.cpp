@@ -4,7 +4,7 @@
 
 Transfer::Transfer(Model* model): objModel(model)
 {
-
+	//sampler = new Sampler();
 }
 
 
@@ -28,8 +28,8 @@ void Transfer::GenerateUnShadowedCoeffs()
 	{
 		glm::vec3 normal = objModel->GetCurrentVertexNormal(i);
 		// for each samples
-		for(GLuint j = 0; j < )
-		float cosineTerm = glm::dot(normal, );
+		for(GLuint j = 0; j < sampler->size(); ++j)
+		float cosineTerm = glm::dot(normal, (*sampler)[j].direction);
 
 		// for each SHfunc
 	}

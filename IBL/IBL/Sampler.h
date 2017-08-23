@@ -58,6 +58,12 @@ public:
 	{
 		return samples.size();
 	}
+
+	const Sample& operator[](unsigned n) const
+	{
+		assert(n >= 0 && n < samples.size());
+		return samples[n];
+	}
 private:
 	vector<Sample> samples;
 

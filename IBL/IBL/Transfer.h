@@ -5,6 +5,8 @@
 #include "EnvLight.h"
 #include <model.h>
 
+#include "Sampler.h"
+
 using std::vector;
 
 class Transfer
@@ -18,5 +20,6 @@ public:
 	vector<glm::vec3> transferVectorUnShadowed; // integrate without visibility
 	
 	Model* objModel;
+	Sampler* sampler;
 };
 
