@@ -12,14 +12,16 @@ using std::vector;
 class Transfer
 {
 public:
-	explicit Transfer(Model* model);
+	Transfer();
+	explicit Transfer(Model* model, const Sampler &sampler);
 	~Transfer();
 
-	void GenerateUnShadowedCoeffs();
+	vector<vector<float>>& GenerateUnShadowedCoeffs() const;
 
-	vector<glm::vec3> transferVectorUnShadowed; // integrate without visibility
+private:
+	static vector<vector<float>> transferVectorUnShadowed; // integrate without visibility
 	
 	Model* objModel;
-	Sampler* sampler;
+	const Sampler* sampler;
 };
 

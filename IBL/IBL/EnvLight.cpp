@@ -31,7 +31,7 @@ void EnvLight::LoadHDREnvMap(string envMapPath)
 {
 	stbi_set_flip_vertically_on_load(true);
 
-	imgData = stbi_loadf("Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
+	imgData = stbi_loadf(envMapPath.c_str(), &width, &height, &nrComponents, 0);
 
 	if (imgData)
 	{
@@ -49,6 +49,7 @@ void EnvLight::LoadHDREnvMap(string envMapPath)
 	else
 	{
 		std::cout << "Failed to load HDR image." << std::endl;
+		throw std::runtime_error("Failed to load HDR image.");
 	}
 
 }
@@ -202,7 +203,7 @@ vector<glm::vec3>& EnvLight::CalcLightCoeffs(const Sampler &sampler) const
 		
 		for(unsigned i = 0; i < sampler.size(); ++i)
 		{
-			auto &sampleRay = sampler[i];
+			const auto &sampleRay = sampler[i];
 			glm::vec3 Lenv = GetLightFromEquirectEnvMap(sampleRay);
 			for (int j = 0; j < 9; ++j)
 				L_lm[j] += sampleRay.SHcoeffs[j] * Lenv;
@@ -210,14 +211,12 @@ vector<glm::vec3>& EnvLight::CalcLightCoeffs(const Sampler &sampler) const
 		for (auto &coeff : L_lm)
 			coeff *= scale;
 		return L_lm;
-
 }
 
 glm::vec3 EnvLight::GetLightFromEquirectEnvMap(const Sample &sampleRay) const
 {
 	float x = sampleRay.phi / (2 * MY_PI);
-	float y = sampleRay.theta / (MY_PI);
-
+	float y = (MY_PI - sampleRay.theta) / (MY_PI);
 
 	size_t idx = x * width + y * height * width;
 	idx *= 3;

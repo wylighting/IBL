@@ -1,8 +1,11 @@
 #version 330 core
 out vec4 FragColor;
-in vec2 TexCoords;
+
+//in vec2 TexCoords;
 in vec3 WorldPos;
 in vec3 Normal;
+
+in vec3 Color;
 
 // material parameters
 uniform vec3 albedo;
@@ -155,7 +158,9 @@ void main()
     //calculate irradiance from spherical harmonics
 
 
-    float nx = Normal.x, ny = Normal.y, nz = Normal.z;
+    //float nx = Normal.x, ny = Normal.y, nz = Normal.z;
+    
+	float nx = Normal.x, nz = -Normal.y, ny = Normal.z;
     vec3 irradiance = c1 * L22 *(nx*nx - ny*ny) + c3 * L20 * nz* nz
         + c4 * L00 - c5 * L20 + 2 * c1 * (L2_2 * nx * ny + L21 * nx * nz + L2_1 * ny * nz)
         + 2 * c2 * (L11 * nx + L1_1 * ny + L10 * nz);
@@ -165,10 +170,11 @@ void main()
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;	  
     
+	irradiance = Color;
 	if(convert)
 		irradiance = texture(irradianceMap, N).rgb;
 
-	vec3 diffuse      = irradiance * albedo;
+	vec3 diffuse = irradiance * albedo;
     vec3 ambient = (kD * diffuse) * ao;
     // vec3 ambient = vec3(0.002);
     ambient = irradiance;
@@ -176,11 +182,11 @@ void main()
     vec3 color = ambient;
 
     // HDR tonemapping
-    // color = color / (color + vec3(1.0));
+    // color = color / (color + vec3(1.0));z
     color = ACESFilm(color);
     // color = Uncharted2Tonemap(color);
     // gamma correct
     // color = pow(color, vec3(1.0/2.2)); 
     FragColor = vec4(color , 1.0);
-	//FragColor = vec4(Normal, 1.0);
+	//FragColor = vec4(ACESFilm(Color), 1.0);
 }

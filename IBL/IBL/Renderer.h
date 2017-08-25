@@ -9,7 +9,7 @@
 #include <shader.h>
 #include <model.h>
 
-//#include "ToolFunctions.h"
+#include "Transfer.h"
 
 class Renderer
 {
@@ -17,13 +17,14 @@ public:
 	Renderer(GLuint scr_width, GLuint scr_height, Camera &initCamera);
 	~Renderer();
 	void InitGLFW();
-	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int);
+	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int, const Sampler&) const;
 	void addModelFromFile(std::string path);
+	void CalculateVertexColor(const Sampler &sampler, const EnvLight &envMap);
 
 private:
-	void GenerateTransferVectors();
+	//void GenerateTransferVectors();
 
-
+	Transfer transferCalculator;
 
 	GLuint SCR_WIDTH, SCR_HEIGHT;
 	GLFWwindow* window;
@@ -36,6 +37,8 @@ private:
 	const int nrColumns = 1;
 	const float spacing = 2.5;
 	Model *objModel;
+
+	static vector<glm::vec3> vertex_color;
 
 	// callback functions
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);

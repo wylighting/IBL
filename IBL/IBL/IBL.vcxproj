@@ -120,7 +120,7 @@
     <ClCompile Include="EnvLight.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Sampler.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="ToolFunctions.cpp" />
     <ClCompile Include="Transfer.cpp" />
   </ItemGroup>

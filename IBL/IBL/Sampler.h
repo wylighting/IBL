@@ -31,17 +31,23 @@ public:
 		{
 			for (int j = 0; j < sqrtNumSamples; j++)
 			{
-				float a = ((float)i + rand() / RAND_MAX) / (float)sqrtNumSamples;
-				float b = ((float)j + rand() / RAND_MAX) / (float)sqrtNumSamples;
+				//float a = ((float)i + rand() / RAND_MAX) / (float)sqrtNumSamples;
+				//float b = ((float)j + rand() / RAND_MAX) / (float)sqrtNumSamples;
+				float a = ((float)i + 0.5f) / (float)sqrtNumSamples;
+				float b = ((float)j + 0.5f) / (float)sqrtNumSamples;
 				float theta = 2 * acos(sqrt(1 - a));
 				float phi = 2 * MY_PI*b;
 				float x = sin(theta)*cos(phi);
 				float y = sin(theta)*sin(phi);
 				float z = cos(theta);
 				int k = i*sqrtNumSamples + j;
-				samples[k].direction.x = x;
-				samples[k].direction.y = y;
-				samples[k].direction.z = z;
+				//samples[k].direction.x = x;
+				//samples[k].direction.y = y;
+				//samples[k].direction.z = z;
+				samples[k].direction.z = x;
+				samples[k].direction.x = y;
+				samples[k].direction.y = z;
+				
 				samples[k].phi = phi;
 				samples[k].theta = theta;
 

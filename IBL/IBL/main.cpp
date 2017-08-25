@@ -47,8 +47,6 @@ int main()
 {
 	Renderer PRTrenderer = Renderer(SCR_WIDTH, SCR_HEIGHT, camera);
 
-	//load model
-	PRTrenderer.addModelFromFile(resource_path + "objects/dragon_10w.obj");
 
 	// build and compile shaders
 	// -------------------------
@@ -74,13 +72,17 @@ int main()
 	backgroundShader.use();
 	backgroundShader.setMat4("projection", projection);
 
-	// pbr: load the HDR environment map
-	// ---------------------------------
-	Sampler sampler(100);
+	// Initialize Sampler
+	Sampler raySampler(100);
 
-	EnvLight envMap(resource_path + "textures / hdr / Newport_Loft / Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
-	vector<glm::vec3> L_lm = envMap.CalcLightCoeffs(sampler);
+	// Setup Environment Light & Get Light Coefficents
+	//EnvLight envMap(resource_path + "textures / hdr / Newport_Loft / Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
+	//EnvLight envMap(resource_path + "textures/hdr/Milkyway/Milkyway_small.hdr", EQUIRECTANGULAR_ENVMAP);
+	EnvLight envMap(resource_path + "textures/hdr/Frozen_Waterfall/Frozen_Waterfall_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
 
+	vector<glm::vec3> L_lm = envMap.CalcLightCoeffs(raySampler);
+
+	// Convert equirectangular map to CubeMap
 	GLuint envCubemap = envMap.Equirectangular2CubeMap(equirectangularToCubemapShader);
 
 	//set light coeffs in pbrShader.
@@ -97,10 +99,19 @@ int main()
 			i++;
 		}
 
+	//load model
+	//PRTrenderer.addModelFromFile(resource_path + "objects/dragon_10w.obj");
+	PRTrenderer.addModelFromFile(resource_path + "objects/bunny_normal.obj");
+	//PRTrenderer.addModelFromFile(resource_path + "objects/rock/rock.obj");
+	//PRTrenderer.addModelFromFile(resource_path + "objects/MODELS/sphere.obj");
+
+
+	PRTrenderer.CalculateVertexColor(raySampler, envMap);
+	// Irradiance Map using Traditional Sampling method
 	GLuint irradianceMap = envMap.CreateIrradianceMapWithSampling(irradianceShader);
 
 	// start render
-	PRTrenderer.Render(pbrShader, backgroundShader, envCubemap, irradianceMap);
+	PRTrenderer.Render(pbrShader, backgroundShader, envCubemap, irradianceMap, raySampler);
 
 	return 0;
 }

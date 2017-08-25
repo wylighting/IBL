@@ -30,6 +30,8 @@ Renderer::Renderer(GLuint scr_width, GLuint scr_height, Camera &initCamera) : SC
 	//pbrShader = Shader(nullptr, nullptr);
 	//backgroundShader = Shader(nullptr, nullptr);
 	camera = initCamera;
+
+	//transferCalculator = Transfer(nullptr);
 }
 
 Renderer::~Renderer()
@@ -71,10 +73,45 @@ void Renderer::InitGLFW()
 
 }
 
-void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int irradianceMap)
+vector<glm::vec3> Renderer::vertex_color;
+
+void Renderer::CalculateVertexColor(const Sampler &sampler, const EnvLight &envMap)
 {
+	
+	transferCalculator = Transfer(objModel, sampler);
+	vector<vector<float>> &transferCoeffs = transferCalculator.GenerateUnShadowedCoeffs(); // VERY slow???
+	//
+	vector<glm::vec3> &L_lm = envMap.CalcLightCoeffs(sampler);
 
+	//L_lm[0] = glm::vec3(0.79, 0.44, 0.54);
+	//L_lm[1] = glm::vec3(0.39, 0.35, 0.60);
+	//L_lm[2] = glm::vec3(-0.34, -0.18, -0.27);
+	//L_lm[3] = glm::vec3(-0.29, -0.06, 0.01);
+	//L_lm[4] = glm::vec3(-0.11, -0.05, -0.12);
+	//L_lm[5] = glm::vec3(-0.26, -0.22, -0.47);
+	//L_lm[6] = glm::vec3(-0.16, -0.09, -0.15);
+	//L_lm[7] = glm::vec3(0.56, 0.21, 0.14);
+	//L_lm[8] = glm::vec3(0.21, -0.05, -0.3);
 
+	// Per vertex
+	unsigned vSize = transferCoeffs.size();
+	for (unsigned i = 0; i < vSize; ++i)
+	{
+		vector<float> vTransferCoeffs = transferCoeffs[i];
+		// Calculate sum of lightCoeff & transferCoeff in current vertex
+		glm::vec3 color;
+		for (unsigned j = 0; j < L_lm.size(); ++j)
+		{
+			color += vTransferCoeffs[j] * L_lm[j];
+		}
+		//color = glm::normalize(objModel->GetCurrentVertexNormal(i));
+		vertex_color.push_back(color);
+	}
+}
+
+void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int irradianceMap, const Sampler &sampler) const
+{
+	objModel->SetVertexColor(vertex_color);
 	// then before rendering, configure the viewport to the original framebuffer's screen dimensions
 	int scrWidth, scrHeight;
 	glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
