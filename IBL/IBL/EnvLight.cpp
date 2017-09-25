@@ -3,6 +3,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
 #include <glm/detail/type_mat.hpp>
 #include <vector>
 #include <glm/detail/type_mat.hpp>
@@ -204,7 +205,7 @@ vector<glm::vec3>& EnvLight::CalcLightCoeffs(const Sampler &sampler) const
 		for(unsigned i = 0; i < sampler.size(); ++i)
 		{
 			const auto &sampleRay = sampler[i];
-			glm::vec3 Lenv = GetLightFromEquirectEnvMap(sampleRay);
+			glm::vec3 Lenv = GetLightFromEquirectEnvMap(sampleRay); // why scale??
 			for (int j = 0; j < 9; ++j)
 				L_lm[j] += sampleRay.SHcoeffs[j] * Lenv;
 		}

@@ -45,8 +45,17 @@ glm::vec3 lightColors[] = {
 
 int main()
 {
-	Renderer PRTrenderer = Renderer(SCR_WIDTH, SCR_HEIGHT, camera);
+	Renderer::InitGLFW(SCR_WIDTH, SCR_HEIGHT);
 
+	// Initialize Sampler
+	Sampler raySampler(100);
+
+	// Setup Environment Light & Get Light Coefficents
+	EnvLight envMap(resource_path + "textures/hdr/Newport_Loft/Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
+	//EnvLight envMap(resource_path + "textures/hdr/Milkyway/Milkyway_small.hdr", EQUIRECTANGULAR_ENVMAP);
+	//EnvLight envMap(resource_path + "textures/hdr/Frozen_Waterfall/Frozen_Waterfall_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
+
+	Renderer PRTrenderer = Renderer(camera, raySampler, envMap);
 
 	// build and compile shaders
 	// -------------------------
@@ -72,18 +81,9 @@ int main()
 	backgroundShader.use();
 	backgroundShader.setMat4("projection", projection);
 
-	// Initialize Sampler
-	Sampler raySampler(100);
 
-	// Setup Environment Light & Get Light Coefficents
-	//EnvLight envMap(resource_path + "textures / hdr / Newport_Loft / Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
-	//EnvLight envMap(resource_path + "textures/hdr/Milkyway/Milkyway_small.hdr", EQUIRECTANGULAR_ENVMAP);
-	EnvLight envMap(resource_path + "textures/hdr/Frozen_Waterfall/Frozen_Waterfall_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
-
+	// Compute using ravi's method directly in pbrShader
 	vector<glm::vec3> L_lm = envMap.CalcLightCoeffs(raySampler);
-
-	// Convert equirectangular map to CubeMap
-	GLuint envCubemap = envMap.Equirectangular2CubeMap(equirectangularToCubemapShader);
 
 	//set light coeffs in pbrShader.
 	int i = 0;
@@ -99,19 +99,24 @@ int main()
 			i++;
 		}
 
+
 	//load model
 	//PRTrenderer.addModelFromFile(resource_path + "objects/dragon_10w.obj");
+#ifndef _DEBUG
 	PRTrenderer.addModelFromFile(resource_path + "objects/bunny_normal.obj");
-	//PRTrenderer.addModelFromFile(resource_path + "objects/rock/rock.obj");
+#else
+	PRTrenderer.addModelFromFile(resource_path + "objects/rock/rock.obj");
+#endif
 	//PRTrenderer.addModelFromFile(resource_path + "objects/MODELS/sphere.obj");
 
 
-	PRTrenderer.CalculateVertexColor(raySampler, envMap);
+	// Convert equirectangular map to CubeMap
+	GLuint envCubemap = envMap.Equirectangular2CubeMap(equirectangularToCubemapShader);
 	// Irradiance Map using Traditional Sampling method
 	GLuint irradianceMap = envMap.CreateIrradianceMapWithSampling(irradianceShader);
 
 	// start render
-	PRTrenderer.Render(pbrShader, backgroundShader, envCubemap, irradianceMap, raySampler);
+	PRTrenderer.Render(pbrShader, backgroundShader, envCubemap, irradianceMap);
 
 	return 0;
 }

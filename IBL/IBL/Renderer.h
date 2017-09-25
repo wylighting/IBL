@@ -14,24 +14,20 @@
 class Renderer
 {
 public:
-	Renderer(GLuint scr_width, GLuint scr_height, Camera &initCamera);
+	Renderer(Camera &initCamera, const Sampler &sampler, const EnvLight &envMap);
 	~Renderer();
-	void InitGLFW();
-	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int, const Sampler&) const;
+	static void InitGLFW(GLuint scr_width, GLuint scr_height);
+	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int) const;
 	void addModelFromFile(std::string path);
-	void CalculateVertexColor(const Sampler &sampler, const EnvLight &envMap);
 
 private:
-	//void GenerateTransferVectors();
+	void CalAndSetupVertexColor() const;
+	
+	const Sampler &sampler;
+	const EnvLight &envMap;
 
-	Transfer transferCalculator;
-
-	GLuint SCR_WIDTH, SCR_HEIGHT;
-	GLFWwindow* window;
-	//Shader	pbrShader;
-	//Shader backgroundShader;
-
-	//unsigned int envCubemap;
+	//GLuint SCR_WIDTH, SCR_HEIGHT;
+	static GLFWwindow* window;
 
 	const int nrRows = 1;
 	const int nrColumns = 1;
@@ -44,7 +40,7 @@ private:
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-	static void processInput(GLFWwindow *window);
+	void processInput(GLFWwindow *window) const;
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 	// camera
@@ -59,5 +55,5 @@ private:
 
 	//control
 	static bool convert;
-
+	static bool isShadow;
 };

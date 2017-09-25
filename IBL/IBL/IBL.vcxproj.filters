@@ -16,6 +16,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{73ec65b4-9a4e-40c9-ad87-8d32f558105a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Embree">
+      <UniqueIdentifier>{b676a3c0-6182-48ad-91ed-6e731297dd7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -27,9 +30,6 @@
     <ClCompile Include="EnvLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\OpenGL_Libraries\include\TOOLS\model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Transfer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,6 +37,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RayTracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,6 +60,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sampler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\embree-2.16.5.x64.windows\embree\tutorials\common\core\differential_geometry.h">
+      <Filter>Embree</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\embree-2.16.5.x64.windows\embree\tutorials\common\core\ray.h">
+      <Filter>Embree</Filter>
+    </ClInclude>
+    <ClInclude Include="RayTracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

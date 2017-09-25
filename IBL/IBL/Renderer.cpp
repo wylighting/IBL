@@ -14,32 +14,8 @@ Camera Renderer::camera = Camera();
 float Renderer::deltaTime = 0.0f;
 float Renderer::lastFrame = 0.0f;
 
-
-Renderer::Renderer(GLuint scr_width, GLuint scr_height, Camera &initCamera) : SCR_WIDTH(scr_width), SCR_HEIGHT(scr_height)
-{
-	InitGLFW();
-	// init glew
-	glewExperimental = GL_TRUE;
-	glewInit();
-
-	// configure global opengl state
-	// -----------------------------
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
-
-	//pbrShader = Shader(nullptr, nullptr);
-	//backgroundShader = Shader(nullptr, nullptr);
-	camera = initCamera;
-
-	//transferCalculator = Transfer(nullptr);
-}
-
-Renderer::~Renderer()
-{
-	glfwTerminate();
-}
-
-void Renderer::InitGLFW()
+GLFWwindow* Renderer::window = nullptr;
+void Renderer::InitGLFW(GLuint scr_width, GLuint scr_height)
 {
 	// glfw: initialize and configure
 	// ------------------------------
@@ -53,9 +29,9 @@ void Renderer::InitGLFW()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
 
-	// glfw window creation
-	// --------------------
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+														 // glfw window creation
+														 // --------------------
+	window = glfwCreateWindow(scr_width, scr_height, "LearnOpenGL", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	if (window == NULL)
 	{
@@ -71,14 +47,39 @@ void Renderer::InitGLFW()
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	// init glew
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+}
+
+
+Renderer::Renderer(Camera &initCamera, const Sampler &sampler, const EnvLight &envMap) : sampler(sampler), envMap(envMap)
+{
+	//InitGLFW();
+
+	// configure global opengl state
+	// -----------------------------
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
+
+	//pbrShader = Shader(nullptr, nullptr);
+	//backgroundShader = Shader(nullptr, nullptr);
+	camera = initCamera;
+
+}
+
+Renderer::~Renderer()
+{
+	glfwTerminate();
 }
 
 vector<glm::vec3> Renderer::vertex_color;
 
-void Renderer::CalculateVertexColor(const Sampler &sampler, const EnvLight &envMap)
+void Renderer::CalAndSetupVertexColor() const
 {
-	
-	transferCalculator = Transfer(objModel, sampler);
+	vertex_color.clear();
+	Transfer transferCalculator = Transfer(objModel, sampler, isShadow);
 	vector<vector<float>> &transferCoeffs = transferCalculator.GenerateUnShadowedCoeffs(); // VERY slow???
 	//
 	vector<glm::vec3> &L_lm = envMap.CalcLightCoeffs(sampler);
@@ -107,11 +108,12 @@ void Renderer::CalculateVertexColor(const Sampler &sampler, const EnvLight &envM
 		//color = glm::normalize(objModel->GetCurrentVertexNormal(i));
 		vertex_color.push_back(color);
 	}
+	objModel->SetVertexColor(vertex_color);
 }
 
-void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int irradianceMap, const Sampler &sampler) const
+void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int irradianceMap) const
 {
-	objModel->SetVertexColor(vertex_color);
+	CalAndSetupVertexColor();
 	// then before rendering, configure the viewport to the original framebuffer's screen dimensions
 	int scrWidth, scrHeight;
 	glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
@@ -129,9 +131,9 @@ void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int 
 
 		// input
 		// -----
-		processInput(window);
 		pbrShader.use();
 		pbrShader.setBool("convert", convert);
+
 
 		// render
 		// ------
@@ -162,6 +164,8 @@ void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int 
 		));
 		pbrShader.setMat4("model", model);
 		//ModelBox::RenderSphere();
+		processInput(window);
+
 		objModel->Draw(pbrShader);
 
 
@@ -210,6 +214,7 @@ void Renderer::addModelFromFile(std::string path)
 bool keys[1024];
 bool keysPressed[1024];
 bool Renderer::convert = false;
+bool Renderer::isShadow = false;
 // Is called whenever a key is pressed/released via GLFW
 void Renderer::key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -230,7 +235,7 @@ void Renderer::key_callback(GLFWwindow* window, int key, int scancode, int actio
 }
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void Renderer::processInput(GLFWwindow *window)
+void Renderer::processInput(GLFWwindow *window) const
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -250,6 +255,14 @@ void Renderer::processInput(GLFWwindow *window)
 		convert = ! convert;
 		keysPressed[GLFW_KEY_SPACE] = true;
 	}
+
+	if (keys[GLFW_KEY_E] && !keysPressed[GLFW_KEY_E])
+	{
+		isShadow = !isShadow;
+		keysPressed[GLFW_KEY_E] = true;
+		CalAndSetupVertexColor();
+	}
+	
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

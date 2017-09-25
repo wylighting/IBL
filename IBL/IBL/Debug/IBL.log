@@ -1,30 +1,14 @@
-﻿  EnvLight.cpp
+﻿  Transfer.cpp
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(98): warning C4305: 'initializing': truncation from 'double' to 'float'
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(139): warning C4018: '<': signed/unsigned mismatch
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(163): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(165): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(167): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\sampler.h(37): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\sampler.h(54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\envlight.cpp(202): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\envlight.cpp(218): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\envlight.cpp(219): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\envlight.cpp(221): warning C4244: 'initializing': conversion from 'float' to '::size_t', possible loss of data
-  Generating Code...
-  Compiling...
-  Sampler.cpp
-f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(98): warning C4305: 'initializing': truncation from 'double' to 'float'
-f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(139): warning C4018: '<': signed/unsigned mismatch
-f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(163): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(165): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(167): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\sampler.h(37): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\sampler.h(54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\sampler.cpp(7): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  main.cpp
-  Transfer.cpp
-  Renderer.cpp
+f:\opengl_ws\ibl\ibl\ibl\sampler.h(39): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\sampler.h(56): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\transfer.cpp(66): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\transfer.cpp(66): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\transfer.cpp(67): warning C4305: 'initializing': truncation from 'double' to 'float'
+f:\opengl_ws\opengl_libraries\include\tools\model.h(79): warning C4172: returning address of local variable or temporary
   IBL.vcxproj -> F:\OpenGL_ws\IBL\IBL\Debug\IBL.exe
   IBL.vcxproj -> F:\OpenGL_ws\IBL\IBL\Debug\IBL.pdb (Partial PDB)
