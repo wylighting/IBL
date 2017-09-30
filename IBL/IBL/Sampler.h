@@ -20,7 +20,7 @@ struct Sample
 class Sampler
 {
 public:
-	Sampler(int numSamples);
+	explicit Sampler(int numSamples);
 	~Sampler();
 
 	bool GenerateSamples(int sqrtNumSamples)

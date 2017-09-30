@@ -9,18 +9,31 @@
 #include <glm/detail/type_mat.hpp>
 #include <vector>
 
-EnvLight::EnvLight(string envMapPath, EnvMapType envMapType)
+EnvLight::EnvLight(string envMapPath, EnvMapType envMapType, const Shader &equirShader)
 {
-	LoadHDREnvMap(envMapPath);
+	LoadHDREnvMapEquirectangular(envMapPath);
 	if (envMapType == EQUIRECTANGULAR_ENVMAP)
 	{
 		//prepare for converting to cube map
 		setupFrameBuffer();
 		setupEnvCubeMap();
-		//Equirectangular2CubeMap();
+		Equirectangular2CubeMap(equirShader);
 	}
 }
 
+EnvLight::EnvLight(vector<string>& faces, EnvMapType envMapType)
+{
+	if (envMapType == CUBE_ENVMAP)
+	{
+		//prepare for converting to cube map
+		//setupFrameBuffer();
+		setupEnvCubeMap();
+		//Equirectangular2CubeMap();
+		if(!LoadCubeMap(faces))
+			std::cerr << "Cube map is not loaded correctly." << std::ends;
+	}
+
+}
 EnvLight::~EnvLight()
 {
 	delete equirectangularToCubemapShader;
@@ -28,7 +41,7 @@ EnvLight::~EnvLight()
 	stbi_image_free(imgData);
 }
 
-void EnvLight::LoadHDREnvMap(string envMapPath)
+void EnvLight::LoadHDREnvMapEquirectangular(string envMapPath)
 {
 	stbi_set_flip_vertically_on_load(true);
 
@@ -55,7 +68,39 @@ void EnvLight::LoadHDREnvMap(string envMapPath)
 
 }
 
-GLuint EnvLight::Equirectangular2CubeMap(const Shader &equirectangularShader)
+bool EnvLight::LoadCubeMap(vector<string>& faces) const
+{
+	// envCubeMap
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+
+	int width, height, channels;
+	for (unsigned int i = 0; i < faces.size(); ++i)
+	{
+		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &channels, 0);
+		if(data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+			stbi_image_free(data);
+			return false;
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return true;
+}
+
+
+
+void EnvLight::Equirectangular2CubeMap(const Shader &equirectangularShader)
 {
 	equirectangularToCubemapShader = new Shader(equirectangularShader);
 
@@ -94,7 +139,7 @@ GLuint EnvLight::Equirectangular2CubeMap(const Shader &equirectangularShader)
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	return envCubemap;
+	//return envCubemap;
 }
 
 void EnvLight::setupEnvCubeMap()
@@ -214,8 +259,16 @@ vector<glm::vec3>& EnvLight::CalcLightCoeffs(const Sampler &sampler) const
 		return L_lm;
 }
 
-glm::vec3 EnvLight::GetLightFromEquirectEnvMap(const Sample &sampleRay) const
+inline glm::vec3 EnvLight::GetLightFromCubeEnvMap(const Sample& sampleRay) const
 {
+	// Select proper face
+	
+	// decide the texel in the face
+}
+
+inline glm::vec3 EnvLight::GetLightFromEquirectEnvMap(const Sample &sampleRay) const
+{
+	assert(imgData);
 	float x = sampleRay.phi / (2 * MY_PI);
 	float y = (MY_PI - sampleRay.theta) / (MY_PI);
 
@@ -230,3 +283,4 @@ glm::vec3 EnvLight::GetLightFromEquirectEnvMap(const Sample &sampleRay) const
 //{
 //	return samples[i];
 //}
+

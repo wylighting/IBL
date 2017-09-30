@@ -1,3 +1,8 @@
+// **************************************************************** 
+// @file: EnvLight.h
+// @description: 1. load environment light file as environment light
+//				 2. convert environment light to spherical harmonic coefficients
+// ****************************************************************
 #pragma once
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -27,23 +32,29 @@ enum EnvMapType
 	SPHERE_ENVMAP
 };
 
-
-
+struct CubeMap
+{
+	
+};
 
 class EnvLight
 {
 public:
-	EnvLight(string envMapPath, EnvMapType envMapType);
+	EnvLight(string envMapPath, EnvMapType envMapType, const Shader &);
+	EnvLight(vector<string> &faces, EnvMapType envMapType);
 	~EnvLight();
-	void LoadHDREnvMap(string envMapPath);
-	GLuint Equirectangular2CubeMap(const Shader &equirectangularShader);
 	GLuint CreateIrradianceMapWithSampling(const Shader &irradianceShader);
 	//vector<glm::vec3>& CalcLightCoeffs(const vector<Sample> &samples) const;
 	vector<glm::vec3>& CalcLightCoeffs(const Sampler &sampler) const;
 	//void GenerateSamples(int sqrtNumSamples);
 	//Sample GetSampleById(unsigned i);
+	
+	GLuint GetCubeMap() const { return envCubemap; };
 
 private:
+	bool LoadCubeMap(vector<string> &faces) const;
+	void Equirectangular2CubeMap(const Shader &equirectangularShader);
+	void LoadHDREnvMapEquirectangular(string envMapPath);
 	static bool sampleInitialized;
 	static vector<glm::vec3> L_lm;
 
@@ -52,6 +63,7 @@ private:
 	float* imgData;
 
 	glm::vec3 GetLightFromEquirectEnvMap(const Sample &sampleRay) const;
+	glm::vec3 GetLightFromCubeEnvMap(const Sample &sampleRay) const;
 	int width, height, nrComponents;
 	Shader *equirectangularToCubemapShader, *irradianceShader;
 	unsigned int hdrTexture;

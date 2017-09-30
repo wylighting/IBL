@@ -111,7 +111,7 @@ void Renderer::CalAndSetupVertexColor() const
 	objModel->SetVertexColor(vertex_color);
 }
 
-void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int irradianceMap) const
+void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int irradianceMap) const
 {
 	CalAndSetupVertexColor();
 	// then before rendering, configure the viewport to the original framebuffer's screen dimensions
@@ -191,7 +191,7 @@ void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int 
 		backgroundShader.use();
 		backgroundShader.setMat4("view", view);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, envMap.GetCubeMap());
 		//glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
 		ModelBox::RenderCube();
 

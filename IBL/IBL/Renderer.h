@@ -17,7 +17,7 @@ public:
 	Renderer(Camera &initCamera, const Sampler &sampler, const EnvLight &envMap);
 	~Renderer();
 	static void InitGLFW(GLuint scr_width, GLuint scr_height);
-	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int envCubemap, unsigned int) const;
+	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int) const;
 	void addModelFromFile(std::string path);
 
 private:

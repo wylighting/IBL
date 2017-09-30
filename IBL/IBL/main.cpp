@@ -25,6 +25,16 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 const string resource_path = "../../../Resources/";
 
+vector<std::string> skyPath
+{
+	std::string("textures/skybox/right.jpg"),
+	std::string("textures/skybox/left.jpg"),
+	std::string("textures/skybox/top.jpg"),
+	std::string("textures/skybox/bottom.jpg"),
+	std::string("textures/skybox/back.jpg"),
+	std::string("textures/skybox/front.jpg")
+};
+
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -46,12 +56,19 @@ glm::vec3 lightColors[] = {
 int main()
 {
 	Renderer::InitGLFW(SCR_WIDTH, SCR_HEIGHT);
-
+	for (auto &path : skyPath)
+	{
+		path = resource_path + path;
+	}
 	// Initialize Sampler
 	Sampler raySampler(100);
 
 	// Setup Environment Light & Get Light Coefficents
-	EnvLight envMap(resource_path + "textures/hdr/Newport_Loft/Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
+	//EnvLight envMap(resource_path + "textures/hdr/Newport_Loft/Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
+	Shader equirectangularToCubemapShader("cubemap.vs", "cubemap.fs");
+	EnvLight envMap(resource_path + "textures/hdr/Newport_Loft/Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP, equirectangularToCubemapShader);
+
+	//EnvLight envMap(skyPath, CUBE_ENVMAP);
 	//EnvLight envMap(resource_path + "textures/hdr/Milkyway/Milkyway_small.hdr", EQUIRECTANGULAR_ENVMAP);
 	//EnvLight envMap(resource_path + "textures/hdr/Frozen_Waterfall/Frozen_Waterfall_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
 
@@ -60,7 +77,6 @@ int main()
 	// build and compile shaders
 	// -------------------------
 	Shader pbrShader("pbr.vs", "pbr.fs");
-	Shader equirectangularToCubemapShader("cubemap.vs", "cubemap.fs");
 	Shader backgroundShader("background.vs", "background.fs");
 	Shader irradianceShader("cubemap.vs", "irradiance_convolution.fs");
 
@@ -83,27 +99,27 @@ int main()
 
 
 	// Compute using ravi's method directly in pbrShader
-	vector<glm::vec3> L_lm = envMap.CalcLightCoeffs(raySampler);
+	//vector<glm::vec3> L_lm = envMap.CalcLightCoeffs(raySampler);
 
-	//set light coeffs in pbrShader.
-	int i = 0;
-	for(int l = 0; l <= 2; ++l)
-		for(int m = -l; m <= l; ++m)
-		{
-			string coeff_name = "L" + to_string(l);
-			if (m < 0) coeff_name += '_' + to_string(abs(m));
-			else coeff_name += to_string(m);
+	////set light coeffs in pbrShader.
+	//int i = 0;
+	//for(int l = 0; l <= 2; ++l)
+	//	for(int m = -l; m <= l; ++m)
+	//	{
+	//		string coeff_name = "L" + to_string(l);
+	//		if (m < 0) coeff_name += '_' + to_string(abs(m));
+	//		else coeff_name += to_string(m);
 
-			pbrShader.use();
-			pbrShader.setVec3(coeff_name, L_lm[i]);
-			i++;
-		}
+	//		pbrShader.use();
+	//		pbrShader.setVec3(coeff_name, L_lm[i]);
+	//		i++;
+	//	}
 
 
 	//load model
 	//PRTrenderer.addModelFromFile(resource_path + "objects/dragon_10w.obj");
 #ifndef _DEBUG
-	PRTrenderer.addModelFromFile(resource_path + "objects/bunny_normal.obj");
+	PRTrenderer.addModelFromFile(resource_path + "objects/dragon_10w.obj");
 #else
 	PRTrenderer.addModelFromFile(resource_path + "objects/rock/rock.obj");
 #endif
@@ -111,12 +127,16 @@ int main()
 
 
 	// Convert equirectangular map to CubeMap
-	GLuint envCubemap = envMap.Equirectangular2CubeMap(equirectangularToCubemapShader);
+	//GLuint envCubemap = envMap.Equirectangular2CubeMap(equirectangularToCubemapShader);
+
+
+
+	//GLuint envCubemap = envMap.LoadCubeMap(skyPath);
 	// Irradiance Map using Traditional Sampling method
-	GLuint irradianceMap = envMap.CreateIrradianceMapWithSampling(irradianceShader);
+	//GLuint irradianceMap = envMap.CreateIrradianceMapWithSampling(irradianceShader);
 
 	// start render
-	PRTrenderer.Render(pbrShader, backgroundShader, envCubemap, irradianceMap);
+	PRTrenderer.Render(pbrShader, backgroundShader, 0);
 
 	return 0;
 }
