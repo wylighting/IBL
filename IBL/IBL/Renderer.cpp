@@ -80,7 +80,7 @@ void Renderer::CalAndSetupVertexColor() const
 {
 	vertex_color.clear();
 	Transfer transferCalculator = Transfer(objModel, sampler, isShadow);
-	vector<vector<float>> &transferCoeffs = transferCalculator.GenerateUnShadowedCoeffs(); // VERY slow???
+	auto& transferCoeffs = transferCalculator.GetTransferVector(LIGHT_SHADOWED); // VERY slow???
 	//
 	vector<glm::vec3> &L_lm = envMap.CalcLightCoeffs(sampler);
 
@@ -256,6 +256,7 @@ void Renderer::processInput(GLFWwindow *window) const
 		keysPressed[GLFW_KEY_SPACE] = true;
 	}
 
+	// NOT USE
 	if (keys[GLFW_KEY_E] && !keysPressed[GLFW_KEY_E])
 	{
 		isShadow = !isShadow;
@@ -263,6 +264,14 @@ void Renderer::processInput(GLFWwindow *window) const
 		CalAndSetupVertexColor();
 	}
 	
+	// Select Shadow interreflection
+	if (keys[GLFW_KEY_1] && !keysPressed[GLFW_KEY_1])
+	{
+		isShadow = !isShadow;
+		keysPressed[GLFW_KEY_1] = true;
+		CalAndSetupVertexColor();
+	}
+
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

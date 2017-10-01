@@ -2,6 +2,7 @@
 
 
 vector<vector<float>> Transfer::transferVectorUnShadowed; // integrate without visibility
+vector<vector<float>> Transfer::transferVectorShadowed[4];
 
 
 //Transfer::Transfer():objModel(nullptr), rayTrancer(objModel)
@@ -20,7 +21,7 @@ Transfer::~Transfer()
 {
 }
 
-vector<vector<float>>& Transfer::GenerateUnShadowedCoeffs() const
+bool Transfer::GenerateUnShadowedCoeffs() const
 {
 	transferVectorUnShadowed.clear();
 	if (objModel == nullptr)
@@ -30,6 +31,8 @@ vector<vector<float>>& Transfer::GenerateUnShadowedCoeffs() const
 	cout << "Generating Transfer Coefficents. Please wait...\nPorgress: ";
 	int cnt = 0;
 	vector<float> vTransferVector = vector<float>(9, 0);
+	vector<float> vTransferVectorShadowed(9, 0);
+
 	// for each vertex
 	GLuint vertexNum = objModel->GetModelVertexSize();
 	for (GLuint i = 0; i < vertexNum; ++i) //incorrect
@@ -49,15 +52,16 @@ vector<vector<float>>& Transfer::GenerateUnShadowedCoeffs() const
 		{
 			glm::vec3 sampleRayDir = glm::normalize((*sampler)[j].direction);
 			float cosineTerm = glm::dot(normal, sampleRayDir);
-			if (cosineTerm > 0) // Why does nan(ind) occur if I drop this condition?
+			if (cosineTerm > 0) // Why does nan(ind) occur if I drop this condition?D
 			{
-				if (!SelfShadow(i, sampleRayDir) || !isShadow)// Add Visibility
+				// for each SHfunc
+				for (GLuint k = 0; k < 9; ++k)
 				{
-					// for each SHfunc
-					for (GLuint k = 0; k < 9; ++k)
-					{
-						vTransferVector[k] += (*sampler)[j].SHcoeffs[k] * cosineTerm;
-					}
+					vTransferVector[k] += (*sampler)[j].SHcoeffs[k] * cosineTerm;
+				}
+				if (!SelfShadow(i, sampleRayDir))// Add Visibility
+				{
+					vTransferVectorShadowed = vTransferVector;
 				}
 			}
 		}
@@ -71,9 +75,15 @@ vector<vector<float>>& Transfer::GenerateUnShadowedCoeffs() const
 		}
 
 		transferVectorUnShadowed.push_back(vTransferVector);
+		transferVectorShadowed[0].push_back(vTransferVectorShadowed);
 	}
 	cout << "\n" << endl;
- 	return transferVectorUnShadowed;
+ 	return true;
+}
+
+bool Transfer::GenerateInterreflectionShadowedCoeffs() const
+{
+
 }
 
 // Deicide whether the current ray hits the object

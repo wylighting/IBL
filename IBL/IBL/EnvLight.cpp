@@ -34,6 +34,7 @@ EnvLight::EnvLight(vector<string>& faces, EnvMapType envMapType)
 	}
 
 }
+
 EnvLight::~EnvLight()
 {
 	delete equirectangularToCubemapShader;
