@@ -1,4 +1,4 @@
-﻿  Transfer.cpp
+﻿  main.cpp
 f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(98): warning C4305: 'initializing': truncation from 'double' to 'float'
 f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(139): warning C4018: '<': signed/unsigned mismatch
 f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(163): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
@@ -6,14 +6,10 @@ f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(165): warning C4244: 'argument': conver
 f:\opengl_ws\ibl\ibl\ibl\ToolFunctions.h(167): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
 f:\opengl_ws\ibl\ibl\ibl\Sampler.h(39): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 f:\opengl_ws\ibl\ibl\ibl\Sampler.h(56): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Transfer.cpp(70): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-Transfer.cpp(70): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-Transfer.cpp(71): warning C4305: 'initializing': truncation from 'double' to 'float'
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-f:\opengl_ws\ibl\ibl\ibl\transfer.h(63): warning C4172: returning address of local variable or temporary
-  105 of 1223 functions ( 8.6%) were compiled, the rest were copied from previous compilation.
-    4 functions were new in current compilation
-    64 functions had inline decision re-evaluated but remain unchanged
+  1 of 1310 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    8 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   IBL.vcxproj -> F:\OpenGL_ws\IBL\IBL\Release\IBL.exe

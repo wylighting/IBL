@@ -10,12 +10,17 @@ vector<vector<float>> Transfer::transferVectorShadowed[4];
 //	sampler = nullptr;
 //}
 
-Transfer::Transfer(Model* model, const Sampler &raySampler, bool &isShadow): objModel(model), rayTrancer(objModel), isShadow(isShadow)
+//Transfer::Transfer(Model* model, const Sampler &raySampler, bool &isShadow): objModel(model), rayTrancer(objModel), isShadow(isShadow)
+//{
+//	sampler = &raySampler;// not suitable...
+//	//initialize sampler
+//}
+
+Transfer::Transfer(Model* model, const Sampler &raySampler) : objModel(model), rayTrancer(objModel)
 {
 	sampler = &raySampler;// not suitable...
-	//initialize sampler
+						  //initialize sampler
 }
-
 
 Transfer::~Transfer()
 {
@@ -24,6 +29,7 @@ Transfer::~Transfer()
 bool Transfer::GenerateUnShadowedCoeffs() const
 {
 	transferVectorUnShadowed.clear();
+	transferVectorShadowed[0].clear();
 	if (objModel == nullptr)
 		throw runtime_error("Input model is NULL.");
 
@@ -61,15 +67,25 @@ bool Transfer::GenerateUnShadowedCoeffs() const
 				}
 				if (!SelfShadow(i, sampleRayDir))// Add Visibility
 				{
-					vTransferVectorShadowed = vTransferVector;
+					//vTransferVectorShadowed = vTransferVector; // FIXME: WHY IT DOESN'T WORK??
+					for (GLuint k = 0; k < 9; ++k)
+					{
+						vTransferVectorShadowed[k] += (*sampler)[j].SHcoeffs[k] * cosineTerm;
+					}
 				}
 			}
 		}
 
 		//rescale transfer coefficents
 		const float scale = 4 * MY_PI / sampler->size();
-		float diffuseBRDF = 1.0 / MY_PI; // VEC3??
+		const float diffuseBRDF = 1.0 / MY_PI; // VEC3??
+		
 		for (auto &transferCoeff : vTransferVector)
+		{
+			transferCoeff *= diffuseBRDF * scale;
+		}
+
+		for (auto &transferCoeff : vTransferVectorShadowed)
 		{
 			transferCoeff *= diffuseBRDF * scale;
 		}
@@ -81,9 +97,52 @@ bool Transfer::GenerateUnShadowedCoeffs() const
  	return true;
 }
 
-bool Transfer::GenerateInterreflectionShadowedCoeffs() const
+bool Transfer::GenerateInterreflectionShadowedCoeffs(size_t bounceTime) const
 {
+	assert(bounceTime > 0 && bounceTime < 3);
+	// Initialize current bounce shadow coefficients with pervious coefficients
+	// for each SHfunc
+	//for (GLuint k = 0; k < 9; ++k)
+	//{
+	//	transferVectorShadowed[bounceTime][k] = transferVectorShadowed[bounceTime-1][k];
+	//}
+	transferVectorShadowed[bounceTime] = transferVectorShadowed[bounceTime-1];
+	
+	int cnt = 0;
+	// for each vertex
+	GLuint vertexNum = objModel->GetModelVertexSize();
+	for (GLuint i = 0; i < vertexNum; ++i) //incorrect
+	{
+		// Show progress
+		if (i == cnt)
+		{
+			cout << i * 100 / vertexNum << "% ";
+			cnt += vertexNum / 10;
+		}
 
+		glm::vec3 normal = objModel->GetCurrentVertexNormal(i);
+		normal = glm::normalize(normal);
+		float fScale = 0.01f;
+		// for each samples
+		for (GLuint j = 0; j < sampler->size(); ++j)
+		{
+			glm::vec3 sampleRayDir = glm::normalize((*sampler)[j].direction);
+			if (SelfShadow(i, sampleRayDir))
+			{
+				float cosineTerm = glm::dot(normal, sampleRayDir);
+				if (cosineTerm > 0) // Why does nan(ind) occur if I drop this condition?
+				{
+					// for each SHfunc
+					for (GLuint k = 0; k < 9; ++k)
+					{
+						transferVectorShadowed[bounceTime][i][k] += fScale * transferVectorShadowed[bounceTime - 1][i][k] * cosineTerm;
+					}
+				}
+			}
+		}
+
+	}
+	return true;
 }
 
 // Deicide whether the current ray hits the object

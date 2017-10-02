@@ -66,24 +66,40 @@ Renderer::Renderer(Camera &initCamera, const Sampler &sampler, const EnvLight &e
 	//pbrShader = Shader(nullptr, nullptr);
 	//backgroundShader = Shader(nullptr, nullptr);
 	camera = initCamera;
-
+	//transferCalculator = Transfer(objModel, sampler);
 }
 
 Renderer::~Renderer()
 {
+	delete transferCalculator;
 	glfwTerminate();
 }
 
 vector<glm::vec3> Renderer::vertex_color;
 
+void Renderer::PrecomputeTransferCoeffs()
+{
+	transferCalculator = new Transfer(objModel, sampler);
+	if(!transferCalculator->GenerateUnShadowedCoeffs())
+	{
+		cerr << "Generate UnShadower or Shadowed Coeffs failed!" << endl;
+	}
+
+	for (unsigned i = 1; i < 3; ++i)
+	if (!transferCalculator->GenerateInterreflectionShadowedCoeffs(i))
+	{
+		cerr << "Generate Interreflecion shadow Coeffs " << i << " failed!" << endl;
+	}
+}
+
+
 void Renderer::CalAndSetupVertexColor() const
 {
 	vertex_color.clear();
-	Transfer transferCalculator = Transfer(objModel, sampler, isShadow);
-	auto& transferCoeffs = transferCalculator.GetTransferVector(LIGHT_SHADOWED); // VERY slow???
+	auto& transferCoeffs = transferCalculator->GetTransferVector(lightType); // VERY slow???
 	//
 	vector<glm::vec3> &L_lm = envMap.CalcLightCoeffs(sampler);
-
+	
 	//L_lm[0] = glm::vec3(0.79, 0.44, 0.54);
 	//L_lm[1] = glm::vec3(0.39, 0.35, 0.60);
 	//L_lm[2] = glm::vec3(-0.34, -0.18, -0.27);
@@ -111,8 +127,9 @@ void Renderer::CalAndSetupVertexColor() const
 	objModel->SetVertexColor(vertex_color);
 }
 
-void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int irradianceMap) const
+void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int irradianceMap)
 {
+	PrecomputeTransferCoeffs();
 	CalAndSetupVertexColor();
 	// then before rendering, configure the viewport to the original framebuffer's screen dimensions
 	int scrWidth, scrHeight;
@@ -264,11 +281,36 @@ void Renderer::processInput(GLFWwindow *window) const
 		CalAndSetupVertexColor();
 	}
 	
+	if (keys[GLFW_KEY_0] && !keysPressed[GLFW_KEY_0])
+	{
+		//isShadow = !isShadow;
+		lightType = LIGHT_UNSHADOWED;
+		keysPressed[GLFW_KEY_0] = true;
+		CalAndSetupVertexColor();
+	}
+
 	// Select Shadow interreflection
 	if (keys[GLFW_KEY_1] && !keysPressed[GLFW_KEY_1])
 	{
-		isShadow = !isShadow;
+		//isShadow = !isShadow;
+		lightType = LIGHT_SHADOWED;
 		keysPressed[GLFW_KEY_1] = true;
+		CalAndSetupVertexColor();
+	}
+
+	if (keys[GLFW_KEY_2] && !keysPressed[GLFW_KEY_2])
+	{
+		//isShadow = !isShadow;
+		lightType = LIGHT_SHADOWED_BOUNCE_1;
+		keysPressed[GLFW_KEY_2] = true;
+		CalAndSetupVertexColor();
+	}
+
+	if (keys[GLFW_KEY_3] && !keysPressed[GLFW_KEY_3])
+	{
+		//isShadow = !isShadow;
+		lightType = LIGHT_SHADOWED_BOUNCE_2;
+		keysPressed[GLFW_KEY_3] = true;
 		CalAndSetupVertexColor();
 	}
 

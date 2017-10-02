@@ -22,12 +22,14 @@ enum LightType
 class Transfer
 {
 public:
-	//Transfer();
-	explicit Transfer(Model* model, const Sampler &sampler, bool &isShadow);
+	//Transfer() = default;
+	//explicit Transfer(Model* model, const Sampler &sampler, bool &isShadow);
+	explicit Transfer(Model* model, const Sampler &sampler);
+
 	~Transfer();
 
 	bool GenerateUnShadowedCoeffs() const;
-	bool GenerateInterreflectionShadowedCoeffs() const;
+	bool GenerateInterreflectionShadowedCoeffs(size_t bounceTime) const;
 
 	const vector<vector<float>>& GetTransferVector(LightType lightType) const;
 
@@ -42,7 +44,7 @@ private:
 	mutable RayTracer rayTrancer;
 	
 	//control
-	bool &isShadow;
+	//bool &isShadow;
 };
 
 inline const vector<vector<float>>& Transfer::GetTransferVector(LightType lightType) const

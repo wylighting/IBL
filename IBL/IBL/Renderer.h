@@ -17,12 +17,17 @@ public:
 	Renderer(Camera &initCamera, const Sampler &sampler, const EnvLight &envMap);
 	~Renderer();
 	static void InitGLFW(GLuint scr_width, GLuint scr_height);
-	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int) const;
+	void Render(Shader &pbrShader, Shader &backgroundShader, unsigned int);
 	void addModelFromFile(std::string path);
 
 private:
 	void CalAndSetupVertexColor() const;
-	
+	void PrecomputeTransferCoeffs();
+
+	Transfer* transferCalculator;
+
+	mutable LightType lightType = LIGHT_UNSHADOWED; // default unshadowed
+
 	const Sampler &sampler;
 	const EnvLight &envMap;
 

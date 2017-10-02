@@ -67,6 +67,7 @@ int main()
 	//EnvLight envMap(resource_path + "textures/hdr/Newport_Loft/Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP);
 	Shader equirectangularToCubemapShader("cubemap.vs", "cubemap.fs");
 	EnvLight envMap(resource_path + "textures/hdr/Newport_Loft/Newport_Loft_Ref.hdr", EQUIRECTANGULAR_ENVMAP, equirectangularToCubemapShader);
+	//EnvLight envMap2();
 
 	//EnvLight envMap(skyPath, CUBE_ENVMAP);
 	//EnvLight envMap(resource_path + "textures/hdr/Milkyway/Milkyway_small.hdr", EQUIRECTANGULAR_ENVMAP);
@@ -120,6 +121,8 @@ int main()
 	//PRTrenderer.addModelFromFile(resource_path + "objects/dragon_10w.obj");
 #ifndef _DEBUG
 	PRTrenderer.addModelFromFile(resource_path + "objects/dragon_10w.obj");
+	//PRTrenderer.addModelFromFile(resource_path + "objects/bunny_normal.obj");
+
 #else
 	PRTrenderer.addModelFromFile(resource_path + "objects/rock/rock.obj");
 #endif
