@@ -21,8 +21,11 @@ public:
 	void addModelFromFile(std::string path);
 
 private:
-	void CalAndSetupVertexColor() const;
+	inline void CalAndSetupVertexColor(float theta = 0, float phi = 0) const;
 	void PrecomputeTransferCoeffs();
+	void PrecomputeLightCoeffs() const;
+
+	static vector<glm::vec3> L_lm_rotated;
 
 	Transfer* transferCalculator;
 
@@ -48,6 +51,8 @@ private:
 	void processInput(GLFWwindow *window) const;
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
+	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+
 	// camera
 	static Camera camera;
 	static float lastX;
@@ -61,4 +66,9 @@ private:
 	//control
 	static bool convert;
 	static bool isShadow;
+	static bool locked;
+
+	// light rotation control 
+	static float alpha;
+	static float beta;
 };

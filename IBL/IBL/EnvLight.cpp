@@ -244,7 +244,7 @@ bool EnvLight::sampleInitialized = false;
 //	return L_lm;
 //}
 
-vector<glm::vec3>& EnvLight::CalcLightCoeffs(const Sampler &sampler) const
+bool EnvLight::CalcLightCoeffs(const Sampler &sampler) const
 {
 		float scale = 4 * MY_PI / sampler.size();
 		
@@ -257,7 +257,7 @@ vector<glm::vec3>& EnvLight::CalcLightCoeffs(const Sampler &sampler) const
 		}
 		for (auto &coeff : L_lm)
 			coeff *= scale;
-		return L_lm;
+		return true;
 }
 
 inline glm::vec3 EnvLight::GetLightFromCubeEnvMap(const Sample& sampleRay) const

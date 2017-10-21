@@ -15,8 +15,6 @@ struct Sample
 	float SHcoeffs[9];
 };
 
-
-
 class Sampler
 {
 public:
@@ -33,10 +31,13 @@ public:
 			{
 				//float a = ((float)i + rand() / RAND_MAX) / (float)sqrtNumSamples;
 				//float b = ((float)j + rand() / RAND_MAX) / (float)sqrtNumSamples;
+				// Uniform sampling from a plane
 				float a = ((float)i + 0.5f) / (float)sqrtNumSamples;
 				float b = ((float)j + 0.5f) / (float)sqrtNumSamples;
+				// wrap the plane to a sphere's surface
 				float theta = 2 * acos(sqrt(1 - a));
 				float phi = 2 * MY_PI*b;
+				// Convert Spherical coordinates to Cartesian coordinates
 				float x = sin(theta)*cos(phi);
 				float y = sin(theta)*sin(phi);
 				float z = cos(theta);

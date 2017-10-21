@@ -57,6 +57,7 @@ bool Transfer::GenerateUnShadowedCoeffs() const
 		for (GLuint j = 0; j < sampler->size(); ++j)
 		{
 			glm::vec3 sampleRayDir = glm::normalize((*sampler)[j].direction);
+			// Dot product in World Coordinates
 			float cosineTerm = glm::dot(normal, sampleRayDir);
 			if (cosineTerm > 0) // Why does nan(ind) occur if I drop this condition?D
 			{
@@ -108,6 +109,7 @@ bool Transfer::GenerateInterreflectionShadowedCoeffs(size_t bounceTime) const
 	//}
 	transferVectorShadowed[bounceTime] = transferVectorShadowed[bounceTime-1];
 	
+	cout << "\nGenerating Interreflection Coeffs bounce " << bounceTime << endl;
 	int cnt = 0;
 	// for each vertex
 	GLuint vertexNum = objModel->GetModelVertexSize();
@@ -122,7 +124,11 @@ bool Transfer::GenerateInterreflectionShadowedCoeffs(size_t bounceTime) const
 
 		glm::vec3 normal = objModel->GetCurrentVertexNormal(i);
 		normal = glm::normalize(normal);
-		float fScale = 0.01f;
+
+		//rescale transfer coefficents
+		const float scale = 4 * MY_PI / sampler->size();
+		const float diffuseBRDF = 1.0 / MY_PI; // VEC3??
+		float fScale = scale * diffuseBRDF * 0.5;
 		// for each samples
 		for (GLuint j = 0; j < sampler->size(); ++j)
 		{

@@ -41,6 +41,8 @@ void Renderer::InitGLFW(GLuint scr_width, GLuint scr_height)
 	}
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, key_callback);
 
@@ -92,14 +94,25 @@ void Renderer::PrecomputeTransferCoeffs()
 	}
 }
 
+void Renderer::PrecomputeLightCoeffs() const
+{
+	if (!envMap.CalcLightCoeffs(sampler))
+		cerr << "Generate Light Coeffs failed!" << endl;
+}
 
-void Renderer::CalAndSetupVertexColor() const
+
+vector<glm::vec3> Renderer::L_lm_rotated;
+void Renderer::CalAndSetupVertexColor(float theta, float phi) const // MOVE INTO SHADER
 {
 	vertex_color.clear();
-	auto& transferCoeffs = transferCalculator->GetTransferVector(lightType); // VERY slow???
-	//
-	vector<glm::vec3> &L_lm = envMap.CalcLightCoeffs(sampler);
-	
+	L_lm_rotated.clear();
+
+	// Get precomputed coefficients
+	auto &transferCoeffs = transferCalculator->GetTransferVector(lightType);
+	vector<glm::vec3> &L_lm = envMap.GetLightCoeffs();
+	//L_lm_rotated = L_lm;
+	SphericalH::SHRotation::RotateSHCoefficientsVector(L_lm, L_lm_rotated, theta, phi);
+	// Rotate light coeffs through 
 	//L_lm[0] = glm::vec3(0.79, 0.44, 0.54);
 	//L_lm[1] = glm::vec3(0.39, 0.35, 0.60);
 	//L_lm[2] = glm::vec3(-0.34, -0.18, -0.27);
@@ -110,16 +123,16 @@ void Renderer::CalAndSetupVertexColor() const
 	//L_lm[7] = glm::vec3(0.56, 0.21, 0.14);
 	//L_lm[8] = glm::vec3(0.21, -0.05, -0.3);
 
-	// Per vertex
+	// Per vertex Sum
 	unsigned vSize = transferCoeffs.size();
 	for (unsigned i = 0; i < vSize; ++i)
 	{
 		vector<float> vTransferCoeffs = transferCoeffs[i];
 		// Calculate sum of lightCoeff & transferCoeff in current vertex
 		glm::vec3 color;
-		for (unsigned j = 0; j < L_lm.size(); ++j)
+		for (unsigned j = 0; j < L_lm_rotated.size(); ++j)
 		{
-			color += vTransferCoeffs[j] * L_lm[j];
+			color += vTransferCoeffs[j] * L_lm_rotated[j];
 		}
 		//color = glm::normalize(objModel->GetCurrentVertexNormal(i));
 		vertex_color.push_back(color);
@@ -130,11 +143,12 @@ void Renderer::CalAndSetupVertexColor() const
 void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int irradianceMap)
 {
 	PrecomputeTransferCoeffs();
-	CalAndSetupVertexColor();
+	PrecomputeLightCoeffs();
 	// then before rendering, configure the viewport to the original framebuffer's screen dimensions
 	int scrWidth, scrHeight;
 	glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
 	glViewport(0, 0, scrWidth, scrHeight);
+	CalAndSetupVertexColor();
 
 	// render loop
 	// -----------
@@ -174,18 +188,24 @@ void Renderer::Render(Shader &pbrShader, Shader &backgroundShader, unsigned int 
 		pbrShader.setFloat("metallic", 0.2f);
 		pbrShader.setFloat("roughness", 0.5f);
 
+		//Remember that the actual transformation order should be read in reverse: 
+		//even though in code we first translate and then later rotate, the actual transformations first apply a rotation and then a translation. 
 		model = glm::mat4();
-		model = glm::scale(model, glm::vec3(0.5f));
 		model = glm::translate(model, glm::vec3(
-			0.0f, 0.0f, -2.0f
+			0.0f, 0.0f, -3.0f
 		));
+		float theta = static_cast<float>(glfwGetTime());
+		model = glm::rotate(model, theta, glm::vec3(0.0, 1.0, 0.0));
+		model = glm::scale(model, glm::vec3(0.5f));
+
 		pbrShader.setMat4("model", model);
 		//ModelBox::RenderSphere();
 		processInput(window);
 
+		//CalAndSetupVertexColor(0, theta / (2 * MY_PI) * 180.0f);
+		//CalAndSetupVertexColor(beta, alpha); // manual light rotation control for debugging
+
 		objModel->Draw(pbrShader);
-
-
 
 		// render light source (simply re-render sphere at light positions)
 		// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
@@ -326,6 +346,9 @@ void Renderer::framebuffer_size_callback(GLFWwindow* window, int width, int heig
 }
 
 
+float Renderer::alpha = 0.f;
+float Renderer::beta = 0.f;
+bool Renderer::locked = false;
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 void Renderer::mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -340,10 +363,35 @@ void Renderer::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
+	if (locked)
+	{
+		alpha += xoffset / 10.f;
+		beta += yoffset / 10.f;
+		cout << "alpha: " << alpha << endl;
+		cout << "beta:  " << beta << endl;
+	}
+	else
+		camera.ProcessMouseMovement(xoffset, yoffset);
+
 	lastX = xpos;
 	lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+
+}
+
+void Renderer::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button != GLFW_MOUSE_BUTTON_LEFT)
+		return;
+
+	if (action == GLFW_PRESS) {
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		locked = true;
+	}
+	else {
+		locked = false;
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

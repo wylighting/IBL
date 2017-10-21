@@ -1,14 +1,22 @@
-﻿  Transfer.cpp
+﻿  Renderer.cpp
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(98): warning C4305: 'initializing': truncation from 'double' to 'float'
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(139): warning C4018: '<': signed/unsigned mismatch
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(163): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(165): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
 f:\opengl_ws\ibl\ibl\ibl\toolfunctions.h(167): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\sphericalharmonic.h(224): warning C4305: '*=': truncation from 'double' to 'float'
 f:\opengl_ws\ibl\ibl\ibl\sampler.h(39): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\sampler.h(56): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\transfer.cpp(80): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\transfer.cpp(80): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-f:\opengl_ws\ibl\ibl\ibl\transfer.cpp(81): warning C4305: 'initializing': truncation from 'double' to 'float'
-f:\opengl_ws\opengl_libraries\include\tools\model.h(81): warning C4172: returning address of local variable or temporary
+f:\opengl_ws\ibl\ibl\ibl\sampler.h(57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(84): warning C4316: 'Transfer': object allocated on the heap may not be aligned 16
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(158): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(279): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(357): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(358): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(362): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(363): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(375): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(376): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\renderer.cpp(400): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+f:\opengl_ws\ibl\ibl\ibl\transfer.h(65): warning C4172: returning address of local variable or temporary
   IBL.vcxproj -> F:\OpenGL_ws\IBL\IBL\Debug\IBL.exe
   IBL.vcxproj -> F:\OpenGL_ws\IBL\IBL\Debug\IBL.pdb (Partial PDB)

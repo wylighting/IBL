@@ -45,7 +45,8 @@ public:
 	~EnvLight();
 	GLuint CreateIrradianceMapWithSampling(const Shader &irradianceShader);
 	//vector<glm::vec3>& CalcLightCoeffs(const vector<Sample> &samples) const;
-	vector<glm::vec3>& CalcLightCoeffs(const Sampler &sampler) const;
+	bool CalcLightCoeffs(const Sampler &sampler) const;
+	vector<glm::vec3>& GetLightCoeffs() const { return L_lm; };
 	//void GenerateSamples(int sqrtNumSamples);
 	//Sample GetSampleById(unsigned i);
 	

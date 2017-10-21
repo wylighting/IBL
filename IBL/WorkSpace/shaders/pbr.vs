@@ -27,6 +27,10 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 
+void SHrotation()
+{
+}
+
 void main()
 {
     //TexCoords = aTexCoords;
@@ -35,5 +39,13 @@ void main()
     Normal = normalize(aNormal);
     gl_Position =  projection * view * vec4(WorldPos, 1.0);
 
-	Color = aColor;
+	// Calculate color in using some infomation
+	// 1. vTransferCoeffs
+	// 2. L_lm_rotated
+	
+	vec3 color;
+	for (uint i = 0; i < 0; ++i)
+		color += vTransferCoeffs[i] * L_lm_rotated[i];
+
+	Color = color;
 }
